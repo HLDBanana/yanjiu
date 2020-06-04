@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hanergy.out.dao.FoodMapper">
+
+    <select id="findByShopId" resultType="com.hanergy.out.vo.FoodVo">
+        SELECT
+	        count( 1 ) AS sellNum,
+	        f.*
+        FROM
+	        food f
+	        LEFT JOIN order_food d ON f.id = d.foodId
+        WHERE
+	        f.cateId = #{menuId}
+        GROUP BY
+	        d.foodId
+        ORDER BY
+	        sellNum
+    </select>
+
+    <select id="findTop20Sell" resultType="com.hanergy.out.vo.FoodVo">
+         SELECT
+	        count( 1 ) AS sellNum,
+	        f.*
+        FROM
+	        food f
+	        LEFT JOIN order_food d ON f.id = d.foodId
+        GROUP BY
+	        d.foodId
+        ORDER BY
+	        sellNum
+	    LIMIT 0,20
+    </select>
+</mapper>

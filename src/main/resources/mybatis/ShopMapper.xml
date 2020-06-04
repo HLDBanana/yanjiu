@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hanergy.out.dao.ShopMapper">
+
+    <select id="orderByJuli" resultType="com.hanergy.out.vo.ShopVo">
+        SELECT
+            s.*,
+            ROUND(
+                6378.138 * 2 * ASIN(
+                    SQRT(
+                        POW(
+                            SIN(
+                                (
+                                    s.lat * PI() / 180 - #{lat} * PI() / 180
+                                ) / 2
+                            ),
+                            2
+                        ) + COS(s.lat * PI() / 180) * COS(#{lat} * PI() / 180) * POW(
+                            SIN(
+                                (
+                                    s.lng * PI() / 180 - #{lng} * PI() / 180
+                                ) / 2
+                            ),
+                            2
+                        )
+                    )
+                )
+            ,3) AS juli,
+            count(1) as orderNum
+        FROM
+            `order` o RIGHT JOIN shop s
+            on s.id = o.shopId
+        where s.opStatus = 0
+        group by o.shopId
+        ORDER BY
+            juli ASC
+        limit #{start},#{pageSize}
+    </select>
+
+    <select id="findDetailById" resultType="com.hanergy.out.vo.ShopVo">
+        SELECT
+            s.*,
+            count(1) as orderNum
+        FROM
+            `order` o RIGHT JOIN shop s
+            on s.id = o.shopId
+        where s.opStatus = 0 and s.id = #{id}
+        group by o.shopId
+    </select>
+</mapper>
